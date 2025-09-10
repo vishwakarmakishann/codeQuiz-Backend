@@ -17,32 +17,29 @@ exports.register = async (req, resp)=>{
     }
 }
 
-exports.login = async (req, resp)=>{
+exports.login = async (req, resp) => {
     try {
-        const {username, password} = req.body;
-        const user = await userModel.findOne({username});
-        if(user && await bcrypt.compare(password, user.password)){
+        const { username, password } = req.body;
+        const user = await userModel.findOne({ username });
+
+        if (user && await bcrypt.compare(password, user.password)) {
             req.session.username = username;
             req.session.role = user.role;
             req.session.save(err => {
-                if(err) {
-                    console.log("Session save error:", err);
-                } else {
-                    console.log("Session after login:", req.session);
-                    return resp.status(200).json({
-                        message: "Logged In",
-                        username,
-                        role: user.role
-                    });
+                if (err) {
+                    console.error("Session save error:", err);
+                    return resp.status(500).json({ message: "Session could not be saved" });
                 }
+                return resp.status(200).json({ message: "Logged In", username, role: user.role });
             });
+        } else {
+            return resp.status(401).json({ message: "Incorrect username or password" });
         }
-        return resp.status(401).json({message:"Incorrect username or password"});
     } catch (error) {
         console.log(error);
-        
+        return resp.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
 
 exports.logout = async (req, resp)=>{
     try {
