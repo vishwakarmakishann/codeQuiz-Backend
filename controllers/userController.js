@@ -30,6 +30,7 @@ exports.login = async (req, resp) => {
                     console.error("Session save error:", err);
                     return resp.status(500).json({ message: "Session could not be saved" });
                 }
+                console.log("After login session value: ",req.session);
                 return resp.status(200).json({ message: "Logged In", username, role: user.role });
             });
         } else {
