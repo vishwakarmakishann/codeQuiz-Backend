@@ -42,18 +42,25 @@ exports.login = async (req, resp) => {
     }
 };
 
-exports.logout = async (req, resp)=>{
+exports.logout = async (req, resp) => {
     try {
-        if(req.session.username){
-            req.session.destroy();
-            return resp.status(200).json({message:"Logged out"});
+        if (req.session.username) {
+            req.session.destroy(err => {
+                if (err) {
+                    console.log("Session destroy error:", err);
+                    return resp.status(500).json({ message: "Logout failed" });
+                }
+                resp.clearCookie('connect.sid'); 
+                return resp.status(200).json({ message: "Logged out" });
+            });
+        } else {
+            return resp.status(400).json({ message: "Already logged out" });
         }
-        return resp.status(400).json({message:"Already logged out"});
     } catch (error) {
         console.log(error);
-        
+        return resp.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
 
 exports.getUsers = async (req, resp)=>{
     try {
