@@ -10,7 +10,7 @@ const session = require('express-session');
 const app = express();
 dotenv.config();
 connectDB();
-app.use(cors({origin: "http://localhost:5173",credentials: true}));
+app.use(cors({origin: "https://codequiz-ashy.vercel.app",credentials: true}));
 app.use(session({
     secret:"secret-key",
     resave:false,
