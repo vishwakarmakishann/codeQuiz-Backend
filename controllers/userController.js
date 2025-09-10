@@ -22,6 +22,7 @@ exports.login = async (req, resp)=>{
         const {username, password} = req.body;
         const user = await userModel.findOne({username});
         if(user && await bcrypt.compare(password, user.password)){
+            console.log("After login session value: ",req.session);
             req.session.username = username;
             req.session.role = user.role;
             return resp.status(200).json({message:"Logged In", username, role: user.role});
